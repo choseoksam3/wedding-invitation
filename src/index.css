@@ -1,0 +1,34 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-pretendard: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Nanum Myeongjo', serif;
+  --color-warm-50: #fdf8f0;
+  --color-warm-100: #f8f0e3;
+  --color-warm-200: #f0e0c8;
+  --color-warm-300: #e0c8a8;
+  --color-warm-400: #c8a878;
+  --color-warm-500: #a08050;
+  --color-warm-600: #786040;
+  --color-warm-700: #584830;
+  --color-warm-800: #383020;
+  --color-warm-900: #201810;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-pretendard);
+  background-color: var(--color-warm-50);
+  color: #3a3a3a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+html {
+  scrollbar-width: none;
+}
