@@ -72,7 +72,7 @@ function AnimatedSprite({ frames, fps = 8, flip = false, style = {}, className =
       alt=""
       className={className}
       style={{
-        imageRendering: 'pixelated',
+        imageRendering: 'auto',
         transform: flip ? 'scaleX(-1)' : 'none',
         width: 128,
         height: 128,
@@ -373,7 +373,7 @@ function BattleScene({ onComplete }) {
             <img
               src={SPRITES.brideSouth}
               alt=""
-              style={{ imageRendering: 'pixelated', width: 128, height: 128 }}
+              style={{ imageRendering: 'auto', width: 128, height: 128 }}
               draggable={false}
             />
           </motion.div>
@@ -698,7 +698,7 @@ export default function PixelIntro({ onComplete }) {
               <img
                 src={SPRITES.brideSouth}
                 alt=""
-                style={{ imageRendering: 'pixelated', width: 256, height: 256 }}
+                style={{ imageRendering: 'auto', width: 256, height: 256 }}
                 draggable={false}
               />
             )}
@@ -871,7 +871,7 @@ export default function PixelIntro({ onComplete }) {
                 <img
                   src={SPRITES.brideFormalSouth}
                   alt=""
-                  style={{ imageRendering: 'pixelated', width: 256, height: 256 }}
+                  style={{ imageRendering: 'auto', width: 256, height: 256 }}
                   draggable={false}
                 />
               </motion.div>
