@@ -1439,7 +1439,7 @@ function GuestbookSection() {
   useEffect(() => {
     const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
     const unsub = onSnapshot(q, (snap) => {
-      setMessages(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setMessages(snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((m) => !m.hidden));
     });
     return unsub;
   }, []);
@@ -1644,7 +1644,7 @@ function CharacterCreatorSection() {
       limit(20)
     );
     const unsub = onSnapshot(q, (snap) => {
-      setGallery(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setGallery(snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((c) => !c.hidden));
     });
     return unsub;
   }, []);
@@ -1704,6 +1704,7 @@ function CharacterCreatorSection() {
     try {
       await addDoc(collection(db, 'characters'), {
         name: generatedChar.name,
+        creatorName: guestName.trim(),
         description_ko: generatedChar.description_ko,
         image_url: generatedChar.image_url,
         storage_urls: generatedChar.storage_urls || {},
@@ -2002,6 +2003,11 @@ function CharacterCreatorSection() {
                         <p className="pixel-font truncate" style={{ color: C.text, fontSize: '10px' }}>
                           {char.name}
                         </p>
+                        {char.creatorName && (
+                          <p className="pixel-font truncate" style={{ color: C.textLight, fontSize: '8px' }}>
+                            by {char.creatorName}
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>
