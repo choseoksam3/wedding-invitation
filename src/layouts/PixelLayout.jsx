@@ -1101,15 +1101,27 @@ function LocationSection() {
           </h2>
         </motion.div>
 
-        {/* Map iframe in pixel frame */}
+        {/* Map - static image with link */}
         <motion.div variants={fadeUp} className="pixel-border overflow-hidden mb-5">
-          <iframe
-            title="wedding-map"
-            src={`https://map.kakao.com/link/map/${encodeURIComponent(location.name)},${location.lat},${location.lng}`}
-            className="w-full border-0"
-            style={{ height: '250px' }}
-            loading="lazy"
-          />
+          <a
+            href={`https://map.kakao.com/link/map/${encodeURIComponent(location.name)},${location.lat},${location.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            <img
+              src={`https://map.kakao.com/?map_type=TYPE_MAP&map_hybrid=false&q=${encodeURIComponent(location.address)}&urlLevel=3&urlX=${location.lng}&urlY=${location.lat}&itemId=&q=${encodeURIComponent(location.name)}`}
+              alt="지도"
+              style={{ display: 'none' }}
+            />
+            <iframe
+              title="wedding-map"
+              src={`https://map.kakao.com/link/map/${encodeURIComponent(location.name)},${location.lat},${location.lng}`}
+              className="w-full border-0 pointer-events-none"
+              style={{ height: '250px' }}
+              loading="lazy"
+            />
+          </a>
         </motion.div>
 
         {/* Location info - terminal style */}

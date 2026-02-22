@@ -11,7 +11,7 @@ export const layouts = [
 
 export function LayoutProvider({ children }) {
   const [layoutId, setLayoutId] = useState(() => {
-    return localStorage.getItem('wedding-layout') || 'classic';
+    return localStorage.getItem('wedding-layout') || 'pixel';
   });
 
   const handleSetLayout = (id) => {

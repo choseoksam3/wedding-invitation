@@ -1,62 +1,63 @@
-import { lazy, Suspense, useState, useCallback } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { lazy, Suspense, useState, useCallback, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import './App.css';
-import { useLayout } from './hooks/useLayout.jsx';
 import BgmPlayer from './components/BgmPlayer';
-import DesignSwitcher from './components/DesignSwitcher';
-import IntroOpening from './components/IntroOpening';
 import PixelIntro from './components/PixelIntro';
 
-
-const ClassicLayout = lazy(() => import('./layouts/ClassicLayout'));
-const KineticLayout = lazy(() => import('./layouts/KineticLayout'));
-const ScrollStoryLayout = lazy(() => import('./layouts/ScrollStoryLayout'));
 const PixelLayout = lazy(() => import('./layouts/PixelLayout'));
 
-const layoutMap = {
-  classic: ClassicLayout,
-  kinetic: KineticLayout,
-  'scroll-story': ScrollStoryLayout,
-  pixel: PixelLayout,
-};
-
-function getInitialShowIntro(layoutId) {
+function getInitialShowIntro() {
   try {
-    const key = layoutId === 'pixel' ? 'pixel-intro-shown' : 'intro-shown';
-    return !sessionStorage.getItem(key);
+    return !sessionStorage.getItem('pixel-intro-shown');
   } catch {
     return true;
   }
 }
 
 export default function App() {
-  const { layoutId } = useLayout();
-  const Layout = layoutMap[layoutId] || ClassicLayout;
-  const [showIntro, setShowIntro] = useState(() => getInitialShowIntro(layoutId));
+  const [showIntro, setShowIntro] = useState(() => getInitialShowIntro());
+  const bgmRef = useRef(null);
 
   const handleIntroComplete = useCallback(() => {
     setShowIntro(false);
     try {
-      const key = layoutId === 'pixel' ? 'pixel-intro-shown' : 'intro-shown';
-      sessionStorage.setItem(key, '1');
-    } catch {
-      // sessionStorage not available
-    }
-  }, [layoutId]);
+      sessionStorage.setItem('pixel-intro-shown', '1');
+    } catch {}
+    // Auto-play BGM after intro
+    if (bgmRef.current) bgmRef.current.play();
+  }, []);
+
+  const handleReplayIntro = useCallback(() => {
+    try { sessionStorage.removeItem('pixel-intro-shown'); } catch {}
+    setShowIntro(true);
+  }, []);
 
   return (
     <>
       <AnimatePresence>
-        {showIntro && layoutId === 'pixel' && (
+        {showIntro && (
           <PixelIntro onComplete={handleIntroComplete} />
-        )}
-        {showIntro && layoutId !== 'pixel' && (
-          <IntroOpening onComplete={handleIntroComplete} />
         )}
       </AnimatePresence>
 
-      <BgmPlayer />
-      <DesignSwitcher />
+      <BgmPlayer ref={bgmRef} />
+
+      {/* Replay Intro button */}
+      {!showIntro && (
+        <motion.button
+          onClick={handleReplayIntro}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-md flex items-center justify-center"
+          style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '14px' }}
+          aria-label="인트로 다시보기"
+          title="인트로 다시보기"
+        >
+          🎮
+        </motion.button>
+      )}
+
       <Suspense
         fallback={
           <div className="min-h-screen flex items-center justify-center">
@@ -64,7 +65,7 @@ export default function App() {
           </div>
         }
       >
-        <Layout />
+        <PixelLayout />
       </Suspense>
     </>
   );

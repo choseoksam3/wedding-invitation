@@ -1,20 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { motion } from 'framer-motion';
 import { weddingConfig } from '../config/wedding';
 
-export default function BgmPlayer() {
+const BgmPlayer = forwardRef(function BgmPlayer(_, ref) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
 
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      if (audioRef.current && !playing) {
+        audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
+      }
+    },
+  }));
+
   useEffect(() => {
-    // 사용자 인터랙션 후 자동 재생 시도
     const handleFirstInteraction = () => {
       if (audioRef.current && !playing) {
         audioRef.current.play().then(() => {
           setPlaying(true);
-        }).catch(() => {
-          // 자동 재생 차단 시 무시
-        });
+        }).catch(() => {});
       }
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);
@@ -75,4 +80,6 @@ export default function BgmPlayer() {
       </motion.button>
     </>
   );
-}
+});
+
+export default BgmPlayer;
