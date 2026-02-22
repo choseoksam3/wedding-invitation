@@ -67,20 +67,18 @@ function AnimatedSprite({ frames, fps = 8, flip = false, style = {}, className =
   const src = Array.isArray(frames) ? frames[frame] : frames;
 
   return (
-    <img
-      src={src}
-      alt=""
+    <div
       className={className}
       style={{
-        imageRendering: 'auto',
+        backgroundImage: `url(${src})`,
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
         transform: flip ? 'scaleX(-1)' : 'none',
-        filter: 'blur(0.3px)',
-        WebkitBackfaceVisibility: 'hidden',
         width: 128,
         height: 128,
         ...style,
       }}
-      draggable={false}
     />
   );
 }
@@ -372,11 +370,8 @@ function BattleScene({ onComplete }) {
             }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
-            <img
-              src={SPRITES.brideSouth}
-              alt=""
-              style={{ imageRendering: 'auto', filter: 'blur(0.3px)', WebkitBackfaceVisibility: 'hidden', width: 128, height: 128 }}
-              draggable={false}
+            <div
+              style={{ backgroundImage: `url(${SPRITES.brideSouth})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', width: 128, height: 128 }}
             />
           </motion.div>
         </div>
@@ -697,11 +692,8 @@ export default function PixelIntro({ onComplete }) {
                 style={{ width: 256, height: 256 }}
               />
             ) : (
-              <img
-                src={SPRITES.brideSouth}
-                alt=""
-                style={{ imageRendering: 'auto', filter: 'blur(0.3px)', WebkitBackfaceVisibility: 'hidden', width: 256, height: 256 }}
-                draggable={false}
+              <div
+                style={{ backgroundImage: `url(${SPRITES.brideSouth})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', width: 256, height: 256 }}
               />
             )}
           </motion.div>
@@ -870,11 +862,8 @@ export default function PixelIntro({ onComplete }) {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <img
-                  src={SPRITES.brideFormalSouth}
-                  alt=""
-                  style={{ imageRendering: 'auto', filter: 'blur(0.3px)', WebkitBackfaceVisibility: 'hidden', width: 256, height: 256 }}
-                  draggable={false}
+                <div
+                  style={{ backgroundImage: `url(${SPRITES.brideFormalSouth})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', width: 256, height: 256 }}
                 />
               </motion.div>
             </div>
