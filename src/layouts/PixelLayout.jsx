@@ -566,16 +566,16 @@ function CoverSection() {
    ============================================================= */
 
 const DIALOG_MESSAGES = [
-  { speaker: 'groom', name: '\uAE40\uBBFC\uC900', badge: 'DEV', color: C.blue,
-    text: '\uC11C\uB85C \uB2E4\uB978 \uAE38\uC744 \uAC78\uC5B4\uC628 \uB450 \uC0AC\uB78C\uC774' },
-  { speaker: 'bride', name: '\uC774\uC11C\uC5F0', badge: 'PM', color: C.pink,
-    text: '\uAC19\uC740 \uACF3\uC744 \uBC14\uB77C\uBCF4\uBA70 \uD568\uAED8 \uAC78\uC5B4\uAC00\uB824 \uD569\uB2C8\uB2E4.' },
-  { speaker: 'groom', name: '\uAE40\uBBFC\uC900', badge: 'DEV', color: C.blue,
-    text: '\uC0B4\uC544\uAC00\uBA74\uC11C \uC18C\uC911\uD55C \uAC83\uB4E4\uC744' },
-  { speaker: 'bride', name: '\uC774\uC11C\uC5F0', badge: 'PM', color: C.pink,
-    text: '\uD568\uAED8 \uB098\uB204\uBA70 \uC0B4\uACA0\uC2B5\uB2C8\uB2E4.' },
-  { speaker: 'both', name: '\uBBFC\uC900 & \uC11C\uC5F0', badge: '\u2665', color: C.yellow,
-    text: '\uC800\uD76C\uC758 \uC0C8\uB85C\uC6B4 \uC2DC\uC791\uC744\n\uCD95\uBCF5\uD574 \uC8FC\uC2DC\uBA74 \uAC10\uC0AC\uD558\uACA0\uC2B5\uB2C8\uB2E4.' },
+  { speaker: 'groom', name: '조석삼', badge: 'DEV', color: C.blue,
+    text: '서로 다른 길을 걸어온 두 사람이' },
+  { speaker: 'bride', name: '박수인', badge: 'PM', color: C.pink,
+    text: '같은 곳을 바라보며 함께 걸어가려 합니다.' },
+  { speaker: 'groom', name: '조석삼', badge: 'DEV', color: C.blue,
+    text: '살아가면서 소중한 것들을' },
+  { speaker: 'bride', name: '박수인', badge: 'PM', color: C.pink,
+    text: '함께 나누며 살겠습니다.' },
+  { speaker: 'both', name: '석삼 & 수인', badge: '♥', color: C.yellow,
+    text: '저희의 새로운 시작을\n축복해 주시면 감사하겠습니다.' },
 ];
 
 function GreetingSection() {

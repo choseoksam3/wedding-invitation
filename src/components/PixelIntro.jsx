@@ -672,7 +672,7 @@ export default function PixelIntro({ onComplete }) {
                 textShadow: `0 0 10px ${C.blue}`,
               }}
             >
-              김민준
+              조석삼
             </motion.p>
             {/* Glasses sparkle */}
             <SparkleEffect x={-30} y={-120} size={30} color={C.white} delay={0.4} />
@@ -772,7 +772,7 @@ export default function PixelIntro({ onComplete }) {
                 textShadow: `0 0 10px ${C.pink}`,
               }}
             >
-              이서연
+              박수인
             </motion.p>
             {/* Fierce eye flash */}
             <SparkleEffect x={20} y={-115} size={25} color={C.pink} delay={0.5} />
@@ -902,9 +902,9 @@ export default function PixelIntro({ onComplete }) {
                 color: C.cream,
               }}
             >
-              <span style={{ textShadow: `0 0 8px ${C.blue}` }}>김민준</span>
+              <span style={{ textShadow: `0 0 8px ${C.blue}` }}>조석삼</span>
               <span style={{ color: C.pink, fontSize: 14 }}>&</span>
-              <span style={{ textShadow: `0 0 8px ${C.pink}` }}>이서연</span>
+              <span style={{ textShadow: `0 0 8px ${C.pink}` }}>박수인</span>
             </motion.div>
 
             {/* Date */}
