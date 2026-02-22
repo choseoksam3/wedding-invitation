@@ -2,15 +2,15 @@ export const weddingConfig = {
   date: '2026-05-23T11:00:00',
   groom: {
     name: '조석삼',
-    father: '김영수',
-    mother: '박미경',
+    father: '조인수',
+    mother: '지향자',
     fatherDeceased: false,
     motherDeceased: false,
   },
   bride: {
     name: '박수인',
-    father: '이정호',
-    mother: '최윤희',
+    father: '박철홍',
+    mother: '오지영',
     fatherDeceased: false,
     motherDeceased: false,
   },
@@ -31,11 +31,11 @@ export const weddingConfig = {
   accounts: {
     groom: [
       { bank: '신한은행', number: '110-456-789012', holder: '조석삼' },
-      { bank: '국민은행', number: '940-25-0012-345', holder: '김영수' },
+      { bank: '국민은행', number: '940-25-0012-345', holder: '조인수' },
     ],
     bride: [
       { bank: '우리은행', number: '1002-567-890123', holder: '박수인' },
-      { bank: '하나은행', number: '612-910234-56789', holder: '이정호' },
+      { bank: '하나은행', number: '612-910234-56789', holder: '박철홍' },
     ],
   },
   greeting: `서로 다른 길을 걸어온 두 사람이\n같은 곳을 바라보며 함께 걸어가려 합니다.\n\n살아가면서 소중한 것들을\n함께 나누며 살겠습니다.\n\n저희의 새로운 시작을\n축복해 주시면 감사하겠습니다.`,

@@ -652,15 +652,15 @@ function CoverSection() {
 
 const DIALOG_MESSAGES = [
   { speaker: 'groom', name: '조석삼', badge: 'DEV', color: C.blue,
-    text: '서로 다른 길을 걸어온 두 사람이' },
+    text: '각자의 자리에서 열심히 살아오다가\n어느 날 우연히 만나게 되었습니다.' },
   { speaker: 'bride', name: '박수인', badge: 'PM', color: C.pink,
-    text: '같은 곳을 바라보며 함께 걸어가려 합니다.' },
+    text: '함께하는 시간이 쌓이면서\n자연스럽게 서로에게 스며들었습니다.' },
   { speaker: 'groom', name: '조석삼', badge: 'DEV', color: C.blue,
-    text: '살아가면서 소중한 것들을' },
+    text: '평범한 하루도 이 사람과 함께라면\n특별해진다는 걸 알게 되었습니다.' },
   { speaker: 'bride', name: '박수인', badge: 'PM', color: C.pink,
-    text: '함께 나누며 살겠습니다.' },
+    text: '앞으로의 날들도 서로를 아끼며\n웃음 가득한 매일을 만들어가겠습니다.' },
   { speaker: 'both', name: '석삼 & 수인', badge: '♥', color: C.yellow,
-    text: '저희의 새로운 시작을\n축복해 주시면 감사하겠습니다.' },
+    text: '저희 두 사람의 새로운 시작을\n가까이에서 축복해 주시면\n더없는 기쁨이겠습니다.' },
 ];
 
 function GreetingSection() {
