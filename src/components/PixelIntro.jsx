@@ -336,7 +336,7 @@ function BattleScene({ onComplete }) {
             <AnimatedSprite
               frames={SPRITES.groomIdle}
               fps={4}
-              style={{ width: 120, height: 120 }}
+              style={{ width: 128, height: 128 }}
             />
           </motion.div>
 
@@ -373,7 +373,7 @@ function BattleScene({ onComplete }) {
             <img
               src={SPRITES.brideSouth}
               alt=""
-              style={{ imageRendering: 'pixelated', width: 120, height: 120 }}
+              style={{ imageRendering: 'pixelated', width: 128, height: 128 }}
               draggable={false}
             />
           </motion.div>
@@ -610,7 +610,7 @@ export default function PixelIntro({ onComplete }) {
           <motion.div
             key="groom-walk-container"
             initial={{ x: '-100vw' }}
-            animate={{ x: 'calc(50vw - 210px)' }}
+            animate={{ x: 'calc(50vw - 238px)' }}
             transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             style={{
               position: 'absolute',
@@ -626,13 +626,13 @@ export default function PixelIntro({ onComplete }) {
               <AnimatedSprite
                 frames={SPRITES.groomWalk}
                 fps={8}
-                style={{ width: 200, height: 200 }}
+                style={{ width: 256, height: 256 }}
               />
             ) : (
               <AnimatedSprite
                 frames={SPRITES.groomIdle}
                 fps={4}
-                style={{ width: 200, height: 200 }}
+                style={{ width: 256, height: 256 }}
               />
             )}
           </motion.div>
@@ -686,7 +686,7 @@ export default function PixelIntro({ onComplete }) {
           <motion.div
             key="bride-walk-container"
             initial={{ x: '100vw' }}
-            animate={{ x: 'calc(50vw + 10px)' }}
+            animate={{ x: 'calc(50vw - 18px)' }}
             transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             style={{
               position: 'absolute',
@@ -703,13 +703,13 @@ export default function PixelIntro({ onComplete }) {
                 frames={SPRITES.brideWalk}
                 fps={8}
                 flip={true}
-                style={{ width: 200, height: 200 }}
+                style={{ width: 256, height: 256 }}
               />
             ) : (
               <img
                 src={SPRITES.brideSouth}
                 alt=""
-                style={{ imageRendering: 'pixelated', width: 200, height: 200 }}
+                style={{ imageRendering: 'pixelated', width: 256, height: 256 }}
                 draggable={false}
               />
             )}
@@ -727,14 +727,14 @@ export default function PixelIntro({ onComplete }) {
             style={{
               position: 'absolute',
               bottom: '22%',
-              left: 'calc(50% - 210px)',
+              left: 'calc(50% - 238px)',
               zIndex: 4,
             }}
           >
             <AnimatedSprite
               frames={SPRITES.groomIdle}
               fps={4}
-              style={{ width: 200, height: 200 }}
+              style={{ width: 256, height: 256 }}
             />
           </motion.div>
         )}
@@ -852,7 +852,7 @@ export default function PixelIntro({ onComplete }) {
                 <AnimatedSprite
                   frames={SPRITES.groomFormal}
                   fps={3}
-                  style={{ width: 200, height: 200 }}
+                  style={{ width: 256, height: 256 }}
                 />
               </motion.div>
 
@@ -882,7 +882,7 @@ export default function PixelIntro({ onComplete }) {
                 <img
                   src={SPRITES.brideFormalSouth}
                   alt=""
-                  style={{ imageRendering: 'pixelated', width: 200, height: 200 }}
+                  style={{ imageRendering: 'pixelated', width: 256, height: 256 }}
                   draggable={false}
                 />
               </motion.div>
