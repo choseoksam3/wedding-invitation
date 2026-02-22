@@ -47,7 +47,7 @@ const C = {
   white: '#fdf8f0',
 };
 
-const CHARACTER_API_URL = import.meta.env.VITE_CHARACTER_API_URL || 'http://52.79.132.179:3001';
+const CHARACTER_API_URL = import.meta.env.DEV ? 'http://52.79.132.179:3001' : '';
 
 const copyToClipboard = async (text) => {
   try {
