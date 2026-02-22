@@ -57,7 +57,7 @@ function loadKakaoSDK() {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=1555e10139222227a86f7ed76f78e13e&autoload=false';
+    script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=671aa1604a9caa10cd5d8f6112c89da1&autoload=false';
     script.onload = () => resolve();
     script.onerror = () => reject(new Error('SDK load failed'));
     document.head.appendChild(script);
