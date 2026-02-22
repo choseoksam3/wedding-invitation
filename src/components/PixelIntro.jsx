@@ -203,7 +203,7 @@ function BattleScene({ onComplete }) {
 
   // Phase progression
   useEffect(() => {
-    const durations = [800, 1200, 1200, 1000, 1300];
+    const durations = [500, 700, 700, 500, 600];
     if (phase >= durations.length) return;
     const timer = setTimeout(() => {
       if (phase === 4) {
@@ -219,14 +219,14 @@ function BattleScene({ onComplete }) {
   useEffect(() => {
     let t;
     if (phase === 1) {
-      t = setTimeout(() => setBrideHearts(1), 500);
+      t = setTimeout(() => setBrideHearts(1), 350);
     } else if (phase === 2) {
-      t = setTimeout(() => setGroomHearts(1), 500);
+      t = setTimeout(() => setGroomHearts(1), 350);
     } else if (phase === 3) {
       t = setTimeout(() => {
         setGroomHearts(3);
         setBrideHearts(3);
-      }, 400);
+      }, 200);
     }
     return () => clearTimeout(t);
   }, [phase]);
@@ -472,14 +472,14 @@ export default function PixelIntro({ onComplete }) {
     if (stage < 0) return;
 
     const timings = {
-      0: 1800,  // LOADING → groom walk
-      1: 2500,  // groom walk → groom pose
-      2: 2000,  // groom pose → bride walk
-      3: 2500,  // bride walk → bride pose
-      4: 1800,  // bride pose → VS
+      0: 1000,  // LOADING → groom walk
+      1: 1500,  // groom walk → groom pose
+      2: 1200,  // groom pose → bride walk
+      3: 1500,  // bride walk → bride pose
+      4: 1000,  // bride pose → battle
       // 5: BattleScene handles its own timing via onComplete
-      6: 1200,  // transform → reveal
-      7: 2500,  // reveal → press start
+      6: 700,   // transform → reveal
+      7: 1800,  // reveal → press start
       // 8 = press start, waits for tap
     };
 
@@ -596,7 +596,7 @@ export default function PixelIntro({ onComplete }) {
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: '100%' }}
-                transition={{ duration: 1.5, ease: 'easeInOut' }}
+                transition={{ duration: 0.8, ease: 'easeInOut' }}
                 style={{ height: '100%', backgroundColor: C.yellow, borderRadius: 1 }}
               />
             </div>
@@ -609,9 +609,9 @@ export default function PixelIntro({ onComplete }) {
         {(stage === 1 || stage === 2) && (
           <motion.div
             key="groom-walk-container"
-            initial={{ x: '100vw' }}
-            animate={{ x: stage === 1 ? 'calc(50vw + 10px)' : 'calc(50vw + 10px)' }}
-            transition={{ duration: 2.2, ease: 'easeOut' }}
+            initial={{ x: '-100vw' }}
+            animate={{ x: 'calc(50vw - 210px)' }}
+            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             style={{
               position: 'absolute',
               bottom: '22%',
@@ -626,7 +626,6 @@ export default function PixelIntro({ onComplete }) {
               <AnimatedSprite
                 frames={SPRITES.groomWalk}
                 fps={8}
-                flip={true} /* flip east → west (walking left) */
                 style={{ width: 200, height: 200 }}
               />
             ) : (
@@ -652,7 +651,7 @@ export default function PixelIntro({ onComplete }) {
             style={{
               position: 'absolute',
               bottom: '10%',
-              right: 'calc(50% - 110px)',
+              left: 'calc(50% - 150px)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -686,9 +685,9 @@ export default function PixelIntro({ onComplete }) {
         {(stage === 3 || stage === 4) && (
           <motion.div
             key="bride-walk-container"
-            initial={{ x: '-100vw' }}
-            animate={{ x: 'calc(50vw - 210px)' }}
-            transition={{ duration: 2.2, ease: 'easeOut' }}
+            initial={{ x: '100vw' }}
+            animate={{ x: 'calc(50vw + 10px)' }}
+            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             style={{
               position: 'absolute',
               bottom: '22%',
@@ -703,6 +702,7 @@ export default function PixelIntro({ onComplete }) {
               <AnimatedSprite
                 frames={SPRITES.brideWalk}
                 fps={8}
+                flip={true}
                 style={{ width: 200, height: 200 }}
               />
             ) : (
@@ -727,7 +727,7 @@ export default function PixelIntro({ onComplete }) {
             style={{
               position: 'absolute',
               bottom: '22%',
-              left: 'calc(50%)',
+              left: 'calc(50% - 210px)',
               zIndex: 4,
             }}
           >
@@ -752,7 +752,7 @@ export default function PixelIntro({ onComplete }) {
             style={{
               position: 'absolute',
               bottom: '10%',
-              left: 'calc(50% - 110px)',
+              right: 'calc(50% - 150px)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
