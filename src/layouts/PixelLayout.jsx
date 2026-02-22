@@ -50,42 +50,50 @@ const C = {
 const CHARACTER_API_URL = import.meta.env.DEV ? 'http://52.79.132.179:3001' : '';
 
 /** Kakao Map component using JS SDK */
+function loadKakaoSDK() {
+  return new Promise((resolve, reject) => {
+    if (window.kakao?.maps?.load) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=1555e10139222227a86f7ed76f78e13e&autoload=false';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('SDK load failed'));
+    document.head.appendChild(script);
+  });
+}
+
 function KakaoMapView({ lat, lng, name }) {
   const mapRef = useRef(null);
   const [sdkLoaded, setSdkLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    let attempts = 0;
     let cancelled = false;
-    const initMap = () => {
-      if (cancelled) return;
-      if (!window.kakao?.maps) {
-        if (attempts++ < 30) {
-          setTimeout(initMap, 300);
-        } else {
-          setFailed(true);
-        }
-        return;
-      }
-      window.kakao.maps.load(() => {
-        if (cancelled || !mapRef.current) return;
-        setSdkLoaded(true);
-        const position = new window.kakao.maps.LatLng(lat, lng);
-        const map = new window.kakao.maps.Map(mapRef.current, {
-          center: position,
-          level: 3,
+    loadKakaoSDK()
+      .then(() => {
+        if (cancelled) return;
+        window.kakao.maps.load(() => {
+          if (cancelled || !mapRef.current) return;
+          setSdkLoaded(true);
+          const position = new window.kakao.maps.LatLng(lat, lng);
+          const map = new window.kakao.maps.Map(mapRef.current, {
+            center: position,
+            level: 3,
+          });
+          const marker = new window.kakao.maps.Marker({ map, position });
+          const infowindow = new window.kakao.maps.InfoWindow({
+            content: `<div style="padding:5px;font-size:12px;white-space:nowrap;">${name}</div>`,
+          });
+          infowindow.open(map, marker);
+          map.setDraggable(false);
+          map.setZoomable(false);
         });
-        const marker = new window.kakao.maps.Marker({ map, position });
-        const infowindow = new window.kakao.maps.InfoWindow({
-          content: `<div style="padding:5px;font-size:12px;white-space:nowrap;">${name}</div>`,
-        });
-        infowindow.open(map, marker);
-        map.setDraggable(false);
-        map.setZoomable(false);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
       });
-    };
-    initMap();
     return () => { cancelled = true; };
   }, [lat, lng, name]);
 
