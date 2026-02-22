@@ -1051,6 +1051,9 @@ function CountdownSection() {
 function GallerySection() {
   const images = weddingConfig.galleryImages;
   const [selectedIdx, setSelectedIdx] = useState(null);
+  const [expanded, setExpanded] = useState(false);
+  const INITIAL_COUNT = 6;
+  const visibleImages = expanded ? images : images.slice(0, INITIAL_COUNT);
 
   return (
     <section className="py-16 px-5" style={{ background: C.bg2 }}>
@@ -1072,13 +1075,14 @@ function GallerySection() {
 
         {/* 2-column grid with pixel frames */}
         <motion.div variants={fadeUp} className="grid grid-cols-2 gap-4">
-          {images.map((src, i) => (
+          {visibleImages.map((src, i) => (
             <motion.button
               key={i}
               className="pixel-border relative overflow-hidden"
               style={{ background: C.white, padding: '4px' }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setSelectedIdx(i)}
+              layout
             >
               <img
                 src={src}
@@ -1095,6 +1099,19 @@ function GallerySection() {
             </motion.button>
           ))}
         </motion.div>
+
+        {/* Show more / less button */}
+        {images.length > INITIAL_COUNT && (
+          <motion.div variants={fadeUp} className="text-center mt-5">
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="pixel-btn pixel-font"
+              style={{ fontSize: '11px', padding: '8px 24px', background: C.bg1, color: C.text }}
+            >
+              {expanded ? '▲ 접기' : `▼ 더보기 (+${images.length - INITIAL_COUNT})`}
+            </button>
+          </motion.div>
+        )}
       </motion.div>
 
       {/* Lightbox */}
