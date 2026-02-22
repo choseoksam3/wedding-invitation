@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Map Test</title></head>
+<body>
+<h2>Kakao Map Test</h2>
+<div id="status">Loading SDK...</div>
+<div id="map" style="width:100%;height:300px;border:1px solid #ccc;"></div>
+<script>
+var s = document.createElement('script');
+s.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=1555e10139222227a86f7ed76f78e13e&autoload=false';
+s.onload = function() {
+  document.getElementById('status').textContent = 'SDK loaded! Initializing map...';
+  kakao.maps.load(function() {
+    var container = document.getElementById('map');
+    var map = new kakao.maps.Map(container, {
+      center: new kakao.maps.LatLng(37.537256, 127.131439),
+      level: 3
+    });
+    var marker = new kakao.maps.Marker({
+      map: map,
+      position: new kakao.maps.LatLng(37.537256, 127.131439)
+    });
+    document.getElementById('status').textContent = 'Map loaded successfully!';
+  });
+};
+s.onerror = function(e) {
+  document.getElementById('status').textContent = 'SDK FAILED to load. Error: ' + JSON.stringify(e);
+};
+document.head.appendChild(s);
+</script>
+</body>
+</html>
