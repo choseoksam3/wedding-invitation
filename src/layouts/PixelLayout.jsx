@@ -12,6 +12,7 @@ import {
   deleteDoc,
   doc,
   serverTimestamp,
+  limit,
 } from 'firebase/firestore';
 
 
@@ -45,6 +46,8 @@ const C = {
   blue: '#6eb5ff',
   white: '#fdf8f0',
 };
+
+const CHARACTER_API_URL = import.meta.env.VITE_CHARACTER_API_URL || 'http://52.79.132.179:3001';
 
 const copyToClipboard = async (text) => {
   try {
@@ -562,13 +565,32 @@ function CoverSection() {
    SECTION 2 - GREETING (RPG Dialog Box)
    ============================================================= */
 
+const DIALOG_MESSAGES = [
+  { speaker: 'groom', name: '\uAE40\uBBFC\uC900', badge: 'DEV', color: C.blue,
+    text: '\uC11C\uB85C \uB2E4\uB978 \uAE38\uC744 \uAC78\uC5B4\uC628 \uB450 \uC0AC\uB78C\uC774' },
+  { speaker: 'bride', name: '\uC774\uC11C\uC5F0', badge: 'PM', color: C.pink,
+    text: '\uAC19\uC740 \uACF3\uC744 \uBC14\uB77C\uBCF4\uBA70 \uD568\uAED8 \uAC78\uC5B4\uAC00\uB824 \uD569\uB2C8\uB2E4.' },
+  { speaker: 'groom', name: '\uAE40\uBBFC\uC900', badge: 'DEV', color: C.blue,
+    text: '\uC0B4\uC544\uAC00\uBA74\uC11C \uC18C\uC911\uD55C \uAC83\uB4E4\uC744' },
+  { speaker: 'bride', name: '\uC774\uC11C\uC5F0', badge: 'PM', color: C.pink,
+    text: '\uD568\uAED8 \uB098\uB204\uBA70 \uC0B4\uACA0\uC2B5\uB2C8\uB2E4.' },
+  { speaker: 'both', name: '\uBBFC\uC900 & \uC11C\uC5F0', badge: '\u2665', color: C.yellow,
+    text: '\uC800\uD76C\uC758 \uC0C8\uB85C\uC6B4 \uC2DC\uC791\uC744\n\uCD95\uBCF5\uD574 \uC8FC\uC2DC\uBA74 \uAC10\uC0AC\uD558\uACA0\uC2B5\uB2C8\uB2E4.' },
+];
+
 function GreetingSection() {
-  const fullText = weddingConfig.greeting;
+  const [messageIndex, setMessageIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isTypingDone, setIsTypingDone] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const sectionRef = useRef(null);
+  const typingRef = useRef(null);
 
+  const currentMsg = DIALOG_MESSAGES[messageIndex];
+  const isLastMessage = messageIndex >= DIALOG_MESSAGES.length - 1;
+  const showFamily = isLastMessage && isTypingDone;
+
+  // Start typing when section is visible
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -582,20 +604,41 @@ function GreetingSection() {
     return () => observer.disconnect();
   }, [hasStarted]);
 
+  // Typing effect per message
   useEffect(() => {
     if (!hasStarted) return;
+    setDisplayedText('');
+    setIsTypingDone(false);
+
+    const text = currentMsg.text;
     let i = 0;
-    const timer = setInterval(() => {
-      if (i < fullText.length) {
-        setDisplayedText(fullText.slice(0, i + 1));
+    typingRef.current = setInterval(() => {
+      if (i < text.length) {
+        setDisplayedText(text.slice(0, i + 1));
         i++;
       } else {
         setIsTypingDone(true);
-        clearInterval(timer);
+        clearInterval(typingRef.current);
       }
     }, 40);
-    return () => clearInterval(timer);
-  }, [hasStarted, fullText]);
+
+    return () => clearInterval(typingRef.current);
+  }, [hasStarted, messageIndex, currentMsg.text]);
+
+  const handleTap = () => {
+    if (!hasStarted) return;
+    if (!isTypingDone) {
+      // Skip typing - show full text immediately
+      clearInterval(typingRef.current);
+      setDisplayedText(currentMsg.text);
+      setIsTypingDone(true);
+    } else if (!isLastMessage) {
+      setMessageIndex((i) => i + 1);
+    }
+  };
+
+  const isBride = currentMsg.speaker === 'bride';
+  const isBoth = currentMsg.speaker === 'both';
 
   return (
     <section ref={sectionRef} className="py-16 px-5" style={{ background: C.bg2 }}>
@@ -612,64 +655,142 @@ function GreetingSection() {
             CHAPTER 1
           </span>
           <h2 className="pixel-font mt-2" style={{ color: C.text, fontSize: '16px' }}>
-            💌 인사말
+            💬 GREETING
           </h2>
         </motion.div>
 
-        {/* RPG Dialog Box */}
-        <motion.div variants={fadeUp} className="pixel-dialog">
-          {/* Dialog speaker indicator */}
+        <motion.div variants={fadeUp}>
+          {/* Speaker badge + name */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={messageIndex}
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 5 }}
+              transition={{ duration: 0.25 }}
+              className="mb-2 flex items-center gap-2"
+              style={{ justifyContent: isBride ? 'flex-end' : 'flex-start' }}
+            >
+              {isBoth ? (
+                <span style={{ fontSize: 14, lineHeight: 1 }}>💕</span>
+              ) : currentMsg.speaker === 'groom' ? (
+                <div style={{ width: 20, height: 20, overflow: 'hidden', flexShrink: 0 }}>
+                  <div style={{ transform: 'scale(0.3)', transformOrigin: 'top left' }}>
+                    <PixelDeveloper />
+                  </div>
+                </div>
+              ) : (
+                <div style={{ width: 20, height: 20, overflow: 'hidden', flexShrink: 0 }}>
+                  <div style={{ transform: 'scale(0.3)', transformOrigin: 'top left' }}>
+                    <PixelPlanner />
+                  </div>
+                </div>
+              )}
+              <span
+                style={{
+                  fontFamily: "'Press Start 2P'",
+                  fontSize: 7,
+                  color: C.white,
+                  backgroundColor: currentMsg.color,
+                  padding: '2px 6px',
+                  border: `2px solid ${C.border}`,
+                  borderRadius: 2,
+                }}
+              >
+                {currentMsg.badge}
+              </span>
+              <span className="pixel-font" style={{ fontSize: 12, color: C.text }}>
+                {currentMsg.name}
+              </span>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Dialog box - tappable */}
           <div
-            className="absolute -top-4 left-4 px-3 py-1"
-            style={{ background: C.border, color: C.white }}
+            onClick={handleTap}
+            className="pixel-dialog"
+            style={{
+              borderColor: currentMsg.color,
+              boxShadow: `4px 4px 0 ${currentMsg.color}, inset 0 0 0 2px ${C.bg2}`,
+              cursor: 'pointer',
+              minHeight: 90,
+              transition: 'border-color 0.3s, box-shadow 0.3s',
+            }}
           >
-            <span className="pixel-font" style={{ fontSize: '10px' }}>💬 MESSAGE</span>
-          </div>
-
-          {/* Dialog content with typing effect */}
-          <div className="pt-2" style={{ minHeight: '160px' }}>
-            <p className="pixel-font leading-relaxed whitespace-pre-wrap" style={{ color: C.text, fontSize: '13px', lineHeight: '2' }}>
-              {displayedText}
-              {!isTypingDone && <span className="typing-cursor">&nbsp;</span>}
-            </p>
-          </div>
-
-          {/* Next message indicator */}
-          {isTypingDone && (
-            <div className="text-right mt-2">
-              <span className="pixel-blink pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>▼</span>
+            {/* Dialog content with typing effect */}
+            <div className="pt-1">
+              <p
+                className="pixel-font leading-relaxed whitespace-pre-wrap"
+                style={{ color: C.text, fontSize: '13px', lineHeight: '2' }}
+              >
+                {displayedText}
+                {!isTypingDone && <span className="typing-cursor">&nbsp;</span>}
+              </p>
             </div>
+
+            {/* Next indicator */}
+            {isTypingDone && !isLastMessage && (
+              <div className="text-right mt-2">
+                <span className="pixel-blink pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>▼</span>
+              </div>
+            )}
+          </div>
+
+          {/* Progress dots */}
+          <div className="flex justify-center gap-2 mt-3">
+            {DIALOG_MESSAGES.map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  backgroundColor: i <= messageIndex ? currentMsg.color : C.border,
+                  opacity: i <= messageIndex ? 1 : 0.3,
+                  transition: 'all 0.3s',
+                }}
+              />
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Parents info - shows after last dialog completes */}
+        <AnimatePresence>
+          {showFamily && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="pixel-dialog mt-6"
+            >
+              <div
+                className="absolute -top-4 left-4 px-3 py-1"
+                style={{ background: C.border, color: C.white }}
+              >
+                <span className="pixel-font" style={{ fontSize: '10px' }}>👪 FAMILY</span>
+              </div>
+
+              <div className="pt-2 space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="pixel-font" style={{ color: C.blue, fontSize: '10px' }}>▶</span>
+                  <span className="pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>
+                    {weddingConfig.groom.father} &middot; {weddingConfig.groom.mother}
+                    <span style={{ color: C.textLight }}> 의 아들 </span>
+                    <span style={{ color: C.text, fontWeight: 'bold' }}>{weddingConfig.groom.name}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="pixel-font" style={{ color: C.pink, fontSize: '10px' }}>▶</span>
+                  <span className="pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>
+                    {weddingConfig.bride.father} &middot; {weddingConfig.bride.mother}
+                    <span style={{ color: C.textLight }}> 의 딸 </span>
+                    <span style={{ color: C.text, fontWeight: 'bold' }}>{weddingConfig.bride.name}</span>
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           )}
-        </motion.div>
-
-        {/* Parents info - also dialog style */}
-        <motion.div variants={fadeUp} className="pixel-dialog mt-6">
-          <div
-            className="absolute -top-4 left-4 px-3 py-1"
-            style={{ background: C.border, color: C.white }}
-          >
-            <span className="pixel-font" style={{ fontSize: '10px' }}>👪 FAMILY</span>
-          </div>
-
-          <div className="pt-2 space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="pixel-font" style={{ color: C.blue, fontSize: '10px' }}>▶</span>
-              <span className="pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>
-                {weddingConfig.groom.father} &middot; {weddingConfig.groom.mother}
-                <span style={{ color: C.textLight }}> 의 아들 </span>
-                <span style={{ color: C.text, fontWeight: 'bold' }}>{weddingConfig.groom.name}</span>
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="pixel-font" style={{ color: C.pink, fontSize: '10px' }}>▶</span>
-              <span className="pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>
-                {weddingConfig.bride.father} &middot; {weddingConfig.bride.mother}
-                <span style={{ color: C.textLight }}> 의 딸 </span>
-                <span style={{ color: C.text, fontWeight: 'bold' }}>{weddingConfig.bride.name}</span>
-              </span>
-            </div>
-          </div>
-        </motion.div>
+        </AnimatePresence>
       </motion.div>
     </section>
   );
@@ -1430,7 +1551,412 @@ function GuestbookSection() {
 
 
 /* =============================================================
-   SECTION 9 - SHARE & FOOTER (Game Ending / Credits)
+   SECTION 9 - CHARACTER CREATOR (AI Guest Character)
+   ============================================================= */
+
+const DESCRIPTION_PRESETS = [
+  '빨간 망토를 두른 용사',
+  '마법 지팡이를 든 마법사',
+  '귀여운 고양이 요정',
+  '파란 갑옷의 기사',
+  '꽃을 든 엘프',
+  '별모양 모자 마녀',
+];
+
+function CharacterCreatorSection() {
+  const [guestName, setGuestName] = useState('');
+  const [descriptionKo, setDescriptionKo] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [generatedChar, setGeneratedChar] = useState(null);
+  const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
+  const [gallery, setGallery] = useState([]);
+  const [showGallery, setShowGallery] = useState(false);
+  const [elapsedSec, setElapsedSec] = useState(0);
+  const timerRef = useRef(null);
+
+  // Load gallery from Firebase
+  useEffect(() => {
+    const q = query(
+      collection(db, 'characters'),
+      orderBy('createdAt', 'desc'),
+      limit(20)
+    );
+    const unsub = onSnapshot(q, (snap) => {
+      setGallery(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+    return unsub;
+  }, []);
+
+  const handleGenerate = async () => {
+    if (!guestName.trim() || !descriptionKo.trim()) {
+      setError('이름과 캐릭터 설명을 입력해주세요!');
+      return;
+    }
+    // Duplicate name check
+    if (gallery.some((c) => c.name === guestName.trim())) {
+      setError('이미 같은 이름의 캐릭터가 있어요! 다른 이름을 사용해주세요.');
+      return;
+    }
+    setError('');
+    setGenerating(true);
+    setGeneratedChar(null);
+    setSaved(false);
+    setElapsedSec(0);
+
+    // Start elapsed timer
+    timerRef.current = setInterval(() => setElapsedSec((s) => s + 1), 1000);
+
+    try {
+      const res = await fetch(`${CHARACTER_API_URL}/api/character`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: guestName.trim(),
+          description_ko: descriptionKo.trim(),
+        }),
+      });
+
+      if (res.status === 429) {
+        setError('요청이 너무 많습니다. 1분 후 다시 시도해주세요!');
+        setGenerating(false);
+        clearInterval(timerRef.current);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error('Generation failed');
+      }
+
+      const data = await res.json();
+      setGeneratedChar(data);
+    } catch (err) {
+      console.error('Character generation error:', err);
+      setError('캐릭터 생성에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    }
+    clearInterval(timerRef.current);
+    setGenerating(false);
+  };
+
+  const handleSave = async () => {
+    if (!generatedChar || saved) return;
+    try {
+      await addDoc(collection(db, 'characters'), {
+        name: generatedChar.name,
+        description_ko: generatedChar.description_ko,
+        image_url: generatedChar.image_url,
+        storage_urls: generatedChar.storage_urls || {},
+        character_id: generatedChar.character_id || '',
+        createdAt: serverTimestamp(),
+      });
+      setSaved(true);
+    } catch (err) {
+      console.error('Save error:', err);
+      setError('저장에 실패했습니다.');
+    }
+  };
+
+  const handlePreset = (preset) => {
+    setDescriptionKo(preset);
+  };
+
+  return (
+    <section className="py-16 px-5" style={{ background: C.bg1 }}>
+      <motion.div
+        className="max-w-md mx-auto"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportConfig}
+        variants={stagger}
+      >
+        {/* Section title */}
+        <motion.div variants={fadeIn} className="text-center mb-6">
+          <span className="pixel-font-en" style={{ fontSize: '8px', color: C.textLight, letterSpacing: '0.2em' }}>
+            CHARACTER SELECT
+          </span>
+          <h2 className="pixel-font mt-2" style={{ color: C.text, fontSize: '16px' }}>
+            🎮 나만의 하객 캐릭터
+          </h2>
+          <p className="pixel-font mt-2" style={{ color: C.textLight, fontSize: '11px' }}>
+            AI가 당신만의 픽셀 캐릭터를 만들어드려요!
+          </p>
+        </motion.div>
+
+        {/* Creator form */}
+        <motion.div variants={fadeUp} className="pixel-dialog mb-5">
+          <div
+            className="absolute -top-4 left-4 px-3 py-1"
+            style={{ background: C.yellow, color: C.text }}
+          >
+            <span className="pixel-font" style={{ fontSize: '10px' }}>✨ CREATE</span>
+          </div>
+
+          <div className="pt-2 space-y-4">
+            {/* Name input */}
+            <div>
+              <label className="pixel-font block mb-1" style={{ color: C.mint, fontSize: '10px' }}>
+                {'>'} name:
+              </label>
+              <input
+                type="text"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                maxLength={20}
+                placeholder="이름을 입력하세요"
+                className="pixel-input"
+              />
+            </div>
+
+            {/* Description input */}
+            <div>
+              <label className="pixel-font block mb-1" style={{ color: C.mint, fontSize: '10px' }}>
+                {'>'} description:
+              </label>
+              <textarea
+                value={descriptionKo}
+                onChange={(e) => setDescriptionKo(e.target.value)}
+                maxLength={100}
+                rows={2}
+                placeholder="캐릭터를 설명해주세요 (예: 파란 모자를 쓴 마법사)"
+                className="pixel-input resize-none"
+              />
+              <div className="flex justify-between mt-1">
+                <span className="pixel-font" style={{ color: C.textLight, fontSize: '9px' }}>
+                  한글로 설명하면 AI가 픽셀 캐릭터를 만들어요
+                </span>
+                <span className="pixel-font" style={{ color: C.textLight, fontSize: '9px' }}>
+                  {descriptionKo.length}/100
+                </span>
+              </div>
+            </div>
+
+            {/* Preset buttons */}
+            <div>
+              <label className="pixel-font block mb-2" style={{ color: C.textLight, fontSize: '9px' }}>
+                추천 캐릭터:
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {DESCRIPTION_PRESETS.map((preset) => (
+                  <button
+                    key={preset}
+                    onClick={() => handlePreset(preset)}
+                    className="pixel-font"
+                    style={{
+                      fontSize: '10px',
+                      padding: '4px 8px',
+                      border: `2px solid ${C.border}`,
+                      background: descriptionKo === preset ? C.yellow : C.white,
+                      color: C.text,
+                      cursor: 'pointer',
+                      transition: 'background 0.2s',
+                    }}
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Error message */}
+            {error && (
+              <p className="pixel-font" style={{ color: C.pink, fontSize: '11px' }}>
+                ⚠ {error}
+              </p>
+            )}
+
+            {/* Generate button */}
+            <div className="text-center pt-1">
+              <button
+                onClick={handleGenerate}
+                disabled={generating}
+                className="pixel-btn"
+                style={{
+                  background: generating ? C.bg2 : C.mint,
+                  fontSize: '13px',
+                  padding: '10px 24px',
+                }}
+              >
+                {generating ? (
+                  <span className="flex items-center gap-2">
+                    <span className="pixel-blink">⏳</span> GENERATING... {elapsedSec}s
+                  </span>
+                ) : (
+                  '🎨 캐릭터 생성!'
+                )}
+              </button>
+              {generating && (
+                <div className="mt-3 space-y-1">
+                  <p className="pixel-font" style={{ color: C.textLight, fontSize: '10px' }}>
+                    AI가 4방향 캐릭터를 만들고 있어요...
+                  </p>
+                  {/* Progress bar */}
+                  <div style={{ width: '60%', margin: '0 auto', height: 8, border: `2px solid ${C.border}`, background: C.bg2 }}>
+                    <motion.div
+                      style={{ height: '100%', background: C.mint }}
+                      initial={{ width: '0%' }}
+                      animate={{ width: '100%' }}
+                      transition={{ duration: 90, ease: 'linear' }}
+                    />
+                  </div>
+                  <p className="pixel-font" style={{ color: C.textLight, fontSize: '9px' }}>
+                    예상 소요시간: 약 1~2분
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Generated character result */}
+        <AnimatePresence>
+          {generatedChar && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+              className="pixel-dialog mb-5"
+            >
+              <div
+                className="absolute -top-4 left-4 px-3 py-1"
+                style={{ background: C.pink, color: C.white }}
+              >
+                <span className="pixel-font" style={{ fontSize: '10px' }}>🎉 COMPLETE!</span>
+              </div>
+
+              <div className="pt-2 text-center">
+                {/* Character image - south facing (front) */}
+                <div
+                  className="inline-block pixel-border-thin p-2 mb-3"
+                  style={{ background: '#1a1a2e' }}
+                >
+                  <img
+                    src={generatedChar.image_url}
+                    alt={generatedChar.name}
+                    style={{
+                      width: 96,
+                      height: 96,
+                      imageRendering: 'pixelated',
+                    }}
+                    crossOrigin="anonymous"
+                  />
+                </div>
+
+                {/* Character info */}
+                <div className="mb-3">
+                  <p className="pixel-font" style={{ color: C.text, fontSize: '14px', fontWeight: 'bold' }}>
+                    {generatedChar.name}
+                  </p>
+                  <p className="pixel-font mt-1" style={{ color: C.textLight, fontSize: '11px' }}>
+                    "{generatedChar.description_ko}"
+                  </p>
+                </div>
+
+                {/* Save button */}
+                <button
+                  onClick={handleSave}
+                  disabled={saved}
+                  className="pixel-btn"
+                  style={{
+                    background: saved ? C.mint : C.yellow,
+                    fontSize: '12px',
+                  }}
+                >
+                  {saved ? '✓ 갤러리에 저장됨!' : '💾 갤러리에 저장'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Guest character gallery */}
+        {gallery.length > 0 && (
+          <motion.div variants={fadeUp}>
+            <button
+              onClick={() => setShowGallery(!showGallery)}
+              className="w-full pixel-dialog flex items-center justify-between mb-3"
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="pixel-font" style={{ color: C.text, fontSize: '13px' }}>
+                  🏰 하객 캐릭터 갤러리
+                </span>
+                <span
+                  className="pixel-font-en"
+                  style={{
+                    fontSize: '7px',
+                    color: C.white,
+                    backgroundColor: C.pink,
+                    padding: '2px 6px',
+                    border: `2px solid ${C.border}`,
+                  }}
+                >
+                  {gallery.length}
+                </span>
+              </div>
+              <span
+                className="pixel-font"
+                style={{
+                  color: C.textLight,
+                  fontSize: '14px',
+                  transform: showGallery ? 'rotate(90deg)' : 'none',
+                  transition: 'transform 0.2s',
+                }}
+              >
+                ▶
+              </span>
+            </button>
+
+            <AnimatePresence>
+              {showGallery && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="grid grid-cols-3 gap-3">
+                    {gallery.map((char) => (
+                      <div
+                        key={char.id}
+                        className="pixel-border-thin p-2 text-center"
+                        style={{ background: C.white }}
+                      >
+                        <div
+                          className="mx-auto mb-2"
+                          style={{ background: '#1a1a2e', width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          <img
+                            src={char.image_url || `data:image/png;base64,${char.image?.base64 || char.image || ''}`}
+                            alt={char.name}
+                            style={{
+                              width: 48,
+                              height: 48,
+                              imageRendering: 'pixelated',
+                            }}
+                            crossOrigin="anonymous"
+                          />
+                        </div>
+                        <p className="pixel-font truncate" style={{ color: C.text, fontSize: '10px' }}>
+                          {char.name}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </motion.div>
+    </section>
+  );
+}
+
+
+/* =============================================================
+   SECTION 10 - SHARE & FOOTER (Game Ending / Credits)
    ============================================================= */
 
 function ShareFooterSection() {
@@ -1576,6 +2102,8 @@ export default function PixelLayout() {
         <AccountSection />
         <PixelDivider />
         <GuestbookSection />
+        <PixelDivider />
+        <CharacterCreatorSection />
         <PixelDivider />
         <ShareFooterSection />
       </div>

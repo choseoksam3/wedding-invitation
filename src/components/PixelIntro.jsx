@@ -150,6 +150,268 @@ function HeartParticles({ count = 12 }) {
 }
 
 /* =====================================================
+   LoveGauge: heart gauge for battle scene
+   ===================================================== */
+function LoveGauge({ badge, color, filled = 0 }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <span
+        style={{
+          fontFamily: "'Press Start 2P'",
+          fontSize: 7,
+          color: C.cream,
+          backgroundColor: color + '44',
+          padding: '2px 6px',
+          border: `2px solid ${color}`,
+          borderRadius: 2,
+          letterSpacing: 1,
+        }}
+      >
+        {badge}
+      </span>
+      <div style={{ display: 'flex', gap: 2 }}>
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            animate={{
+              scale: i < filled ? [1.4, 1] : 1,
+              opacity: i < filled ? 1 : 0.3,
+            }}
+            transition={{ duration: 0.3 }}
+            style={{ fontSize: 14, lineHeight: 1 }}
+          >
+            {i < filled ? '\u2764\uFE0F' : '\u{1F5A4}'}
+          </motion.span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================
+   BattleScene: RPG boss battle between groom & bride
+   Phase 0: BATTLE START!
+   Phase 1: Groom attack (고백 ATTACK!)
+   Phase 2: Bride counter (설렘 COUNTER!)
+   Phase 3: Combo (사랑 COMBO!)
+   Phase 4: LOVE WINS! → onComplete
+   ===================================================== */
+function BattleScene({ onComplete }) {
+  const [phase, setPhase] = useState(0);
+  const [groomHearts, setGroomHearts] = useState(0);
+  const [brideHearts, setBrideHearts] = useState(0);
+
+  // Phase progression
+  useEffect(() => {
+    const durations = [800, 1200, 1200, 1000, 1300];
+    if (phase >= durations.length) return;
+    const timer = setTimeout(() => {
+      if (phase === 4) {
+        onComplete?.();
+      } else {
+        setPhase((p) => p + 1);
+      }
+    }, durations[phase]);
+    return () => clearTimeout(timer);
+  }, [phase, onComplete]);
+
+  // Heart fill effects
+  useEffect(() => {
+    let t;
+    if (phase === 1) {
+      t = setTimeout(() => setBrideHearts(1), 500);
+    } else if (phase === 2) {
+      t = setTimeout(() => setGroomHearts(1), 500);
+    } else if (phase === 3) {
+      t = setTimeout(() => {
+        setGroomHearts(3);
+        setBrideHearts(3);
+      }, 400);
+    }
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  const actionConfig = {
+    0: { text: '\u2694 BATTLE START!', color: C.yellow, size: 14 },
+    1: { text: 'SUPER EFFECTIVE!', color: C.pink, size: 11 },
+    2: { text: 'CRITICAL HIT!', color: C.blue, size: 11 },
+    3: { text: '\u2764 COMBO!', color: C.yellow, size: 13 },
+    4: { text: '\u2764 LOVE WINS! \u2764', color: C.yellow, size: 16 },
+  };
+  const skillConfig = { 1: '\uACE0\uBC31 ATTACK!', 2: '\uC124\uB818 COUNTER!', 4: 'PERFECT MATCH!' };
+  const at = actionConfig[phase];
+  const skill = skillConfig[phase];
+
+  return (
+    <motion.div
+      key="battle-scene"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 8,
+      }}
+    >
+      {/* Screen shake wrapper */}
+      <motion.div
+        animate={phase === 3 ? { x: [-3, 3, -3, 3, -2, 2, 0] } : { x: 0 }}
+        transition={{ duration: 0.5, ease: 'linear' }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {/* Love gauges - top */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '18%',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '0 24px',
+          }}
+        >
+          <LoveGauge badge="DEV" color={C.blue} filled={groomHearts} />
+          <LoveGauge badge="PM" color={C.pink} filled={brideHearts} />
+        </div>
+
+        {/* Action text */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`action-${phase}`}
+            initial={{ opacity: 0, scale: phase === 0 ? 2 : 1.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: 'absolute',
+              top: '28%',
+              textAlign: 'center',
+              width: '100%',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "'Press Start 2P'",
+                fontSize: at.size,
+                color: at.color,
+                textShadow: `0 0 20px ${at.color}, 0 0 40px ${at.color}80`,
+                letterSpacing: 1,
+              }}
+            >
+              {at.text}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Characters */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            position: 'relative',
+          }}
+        >
+          {/* Groom */}
+          <motion.div
+            animate={{
+              x: phase === 1 ? [0, 40, 0] : phase === 3 ? [0, 25] : 0,
+            }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
+            <AnimatedSprite
+              frames={SPRITES.groomIdle}
+              fps={4}
+              style={{ width: 120, height: 120 }}
+            />
+          </motion.div>
+
+          {/* Sparkle area between characters */}
+          <div style={{ position: 'relative', width: 24, height: 120 }}>
+            {phase === 1 && (
+              <>
+                <SparkleEffect x={20} y={30} size={35} color={C.pink} />
+                <SparkleEffect x={10} y={50} size={25} color={C.pink} delay={0.15} />
+              </>
+            )}
+            {phase === 2 && (
+              <>
+                <SparkleEffect x={4} y={30} size={35} color={C.blue} />
+                <SparkleEffect x={14} y={55} size={25} color={C.blue} delay={0.15} />
+              </>
+            )}
+            {phase === 3 && (
+              <>
+                <SparkleEffect x={12} y={20} size={50} color={C.yellow} />
+                <SparkleEffect x={0} y={50} size={35} color={C.pink} delay={0.1} />
+                <SparkleEffect x={24} y={40} size={30} color={C.blue} delay={0.2} />
+              </>
+            )}
+          </div>
+
+          {/* Bride */}
+          <motion.div
+            animate={{
+              x: phase === 2 ? [0, -40, 0] : phase === 3 ? [0, -25] : 0,
+            }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
+            <img
+              src={SPRITES.brideSouth}
+              alt=""
+              style={{ imageRendering: 'pixelated', width: 120, height: 120 }}
+              draggable={false}
+            />
+          </motion.div>
+        </div>
+
+        {/* Skill name - below characters */}
+        <AnimatePresence mode="wait">
+          {skill && (
+            <motion.p
+              key={`skill-${phase}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                position: 'absolute',
+                bottom: '28%',
+                fontFamily: "'Galmuri11', monospace",
+                fontSize: 14,
+                color: C.cream,
+                textShadow: `0 0 8px rgba(240,230,211,0.5)`,
+                textAlign: 'center',
+                width: '100%',
+              }}
+            >
+              {skill}
+            </motion.p>
+          )}
+        </AnimatePresence>
+
+        {/* Victory heart particles */}
+        {phase === 4 && <HeartParticles count={10} />}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* =====================================================
    Badge component: DEV / PM label
    ===================================================== */
 function Badge({ text, color, delay = 0 }) {
@@ -215,7 +477,7 @@ export default function PixelIntro({ onComplete }) {
       2: 2000,  // groom pose → bride walk
       3: 2500,  // bride walk → bride pose
       4: 1800,  // bride pose → VS
-      5: 1500,  // VS → transform flash
+      // 5: BattleScene handles its own timing via onComplete
       6: 1200,  // transform → reveal
       7: 2500,  // reveal → press start
       // 8 = press start, waits for tap
@@ -518,60 +780,10 @@ export default function PixelIntro({ onComplete }) {
         )}
       </AnimatePresence>
 
-      {/* ===== STAGE 5: VS / CROSS ===== */}
+      {/* ===== STAGE 5: BATTLE SCENE ===== */}
       <AnimatePresence>
         {stage === 5 && (
-          <>
-            {/* Groom slides left */}
-            <motion.div
-              key="groom-cross"
-              initial={{ x: 'calc(50vw + 10px)' }}
-              animate={{ x: 'calc(50vw - 210px)' }}
-              transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
-              style={{ position: 'absolute', bottom: '22%', zIndex: 5 }}
-            >
-              <AnimatedSprite
-                frames={SPRITES.groomWalk}
-                fps={10}
-                flip={true}
-                style={{ width: 200, height: 200 }}
-              />
-            </motion.div>
-            {/* Bride slides right */}
-            <motion.div
-              key="bride-cross"
-              initial={{ x: 'calc(50vw - 210px)' }}
-              animate={{ x: 'calc(50vw + 10px)' }}
-              transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
-              style={{ position: 'absolute', bottom: '22%', zIndex: 5 }}
-            >
-              <AnimatedSprite
-                frames={SPRITES.brideWalk}
-                fps={10}
-                style={{ width: 200, height: 200 }}
-              />
-            </motion.div>
-            {/* VS text */}
-            <motion.div
-              key="vs-text"
-              initial={{ opacity: 0, scale: 3 }}
-              animate={{ opacity: [0, 1, 1, 0], scale: [3, 1, 1, 0.5] }}
-              transition={{ duration: 1.2, times: [0, 0.2, 0.7, 1] }}
-              style={{
-                position: 'absolute',
-                top: '38%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                fontFamily: "'Press Start 2P'",
-                fontSize: 32,
-                color: C.yellow,
-                textShadow: `0 0 20px ${C.yellow}, 0 0 40px rgba(240,200,96,0.5)`,
-                zIndex: 8,
-              }}
-            >
-              VS
-            </motion.div>
-          </>
+          <BattleScene onComplete={() => setStage(6)} />
         )}
       </AnimatePresence>
 
