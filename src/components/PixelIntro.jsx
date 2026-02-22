@@ -55,31 +55,42 @@ const ALL_IMAGES = [
    ===================================================== */
 function AnimatedSprite({ frames, fps = 8, flip = false, style = {}, className = '' }) {
   const [frame, setFrame] = useState(0);
+  const frameArray = Array.isArray(frames) ? frames : [frames];
 
   useEffect(() => {
-    if (!frames || frames.length <= 1) return;
+    if (frameArray.length <= 1) return;
     const interval = setInterval(() => {
-      setFrame((f) => (f + 1) % frames.length);
+      setFrame((f) => (f + 1) % frameArray.length);
     }, 1000 / fps);
     return () => clearInterval(interval);
-  }, [frames, fps]);
-
-  const src = Array.isArray(frames) ? frames[frame] : frames;
+  }, [frameArray, fps]);
 
   return (
     <div
       className={className}
       style={{
-        backgroundImage: `url(${src})`,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
+        position: 'relative',
         transform: flip ? 'scaleX(-1)' : 'none',
         width: 128,
         height: 128,
         ...style,
       }}
-    />
+    >
+      {frameArray.map((src, i) => (
+        <div
+          key={src}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${src})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            visibility: i === frame ? 'visible' : 'hidden',
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
