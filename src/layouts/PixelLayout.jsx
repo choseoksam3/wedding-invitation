@@ -1633,6 +1633,7 @@ function CharacterCreatorSection() {
   const [saved, setSaved] = useState(false);
   const [gallery, setGallery] = useState([]);
   const [showGallery, setShowGallery] = useState(false);
+  const [selectedChar, setSelectedChar] = useState(null);
   const [elapsedSec, setElapsedSec] = useState(0);
   const timerRef = useRef(null);
 
@@ -1980,10 +1981,11 @@ function CharacterCreatorSection() {
                 >
                   <div className="grid grid-cols-3 gap-3">
                     {gallery.map((char) => (
-                      <div
+                      <button
                         key={char.id}
                         className="pixel-border-thin p-2 text-center"
-                        style={{ background: C.white }}
+                        style={{ background: C.white, cursor: 'pointer' }}
+                        onClick={() => setSelectedChar(char)}
                       >
                         <div
                           className="mx-auto mb-2"
@@ -2008,7 +2010,7 @@ function CharacterCreatorSection() {
                             by {char.creatorName}
                           </p>
                         )}
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </motion.div>
@@ -2016,6 +2018,92 @@ function CharacterCreatorSection() {
             </AnimatePresence>
           </motion.div>
         )}
+
+        {/* Character lightbox */}
+        <AnimatePresence>
+          {selectedChar && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center px-6"
+              style={{ background: 'rgba(0,0,0,0.7)' }}
+              onClick={() => setSelectedChar(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: 'spring', damping: 20 }}
+                className="pixel-dialog relative w-full max-w-xs"
+                style={{ background: C.bg1 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  className="absolute -top-4 left-4 px-3 py-1"
+                  style={{ background: C.pink, color: C.white }}
+                >
+                  <span className="pixel-font" style={{ fontSize: '10px' }}>🎮 CHARACTER</span>
+                </div>
+                <button
+                  onClick={() => setSelectedChar(null)}
+                  className="absolute -top-3 -right-3 w-8 h-8 flex items-center justify-center"
+                  style={{ background: C.border, color: C.white, border: `2px solid ${C.text}`, fontSize: '14px', lineHeight: 1 }}
+                >
+                  ✕
+                </button>
+
+                <div className="pt-3 text-center">
+                  {/* 4-direction display */}
+                  {selectedChar.storage_urls ? (
+                    <div className="grid grid-cols-2 gap-2 mb-4" style={{ maxWidth: 220, margin: '0 auto' }}>
+                      {['south', 'north', 'east', 'west'].map((dir) => (
+                        <div key={dir} className="text-center">
+                          <div
+                            className="mx-auto pixel-border-thin"
+                            style={{ background: '#1a1a2e', width: 80, height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            <img
+                              src={selectedChar.storage_urls[dir] || selectedChar.image_url}
+                              alt={`${selectedChar.name} ${dir}`}
+                              style={{ width: 64, height: 64, imageRendering: 'pixelated' }}
+                              crossOrigin="anonymous"
+                            />
+                          </div>
+                          <p className="pixel-font-en mt-1" style={{ color: C.textLight, fontSize: '7px', textTransform: 'uppercase' }}>{dir}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div
+                      className="mx-auto pixel-border-thin mb-4"
+                      style={{ background: '#1a1a2e', width: 120, height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <img
+                        src={selectedChar.image_url}
+                        alt={selectedChar.name}
+                        style={{ width: 96, height: 96, imageRendering: 'pixelated' }}
+                        crossOrigin="anonymous"
+                      />
+                    </div>
+                  )}
+
+                  <p className="pixel-font" style={{ color: C.text, fontSize: '14px', fontWeight: 'bold' }}>
+                    {selectedChar.name}
+                  </p>
+                  <p className="pixel-font mt-1" style={{ color: C.textLight, fontSize: '11px' }}>
+                    "{selectedChar.description_ko}"
+                  </p>
+                  {selectedChar.creatorName && (
+                    <p className="pixel-font mt-2" style={{ color: C.blue, fontSize: '10px' }}>
+                      Made by {selectedChar.creatorName}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </section>
   );
