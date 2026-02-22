@@ -549,17 +549,6 @@ export default function PixelIntro({ onComplete }) {
         }}
       />
 
-      {/* Scanline overlay for retro feel */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'repeating-linear-gradient(transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)',
-          pointerEvents: 'none',
-          zIndex: 10,
-        }}
-      />
 
       {/* ===== STAGE 0: LOADING ===== */}
       <AnimatePresence>
