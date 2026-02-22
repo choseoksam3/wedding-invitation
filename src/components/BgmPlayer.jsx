@@ -5,10 +5,11 @@ import { weddingConfig } from '../config/wedding';
 const BgmPlayer = forwardRef(function BgmPlayer(_, ref) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
+  const userPaused = useRef(false);
 
   useImperativeHandle(ref, () => ({
     play: () => {
-      if (audioRef.current && !playing) {
+      if (audioRef.current && !playing && !userPaused.current) {
         audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
       }
     },
@@ -16,7 +17,7 @@ const BgmPlayer = forwardRef(function BgmPlayer(_, ref) {
 
   useEffect(() => {
     const handleFirstInteraction = () => {
-      if (audioRef.current && !playing) {
+      if (audioRef.current && !playing && !userPaused.current) {
         audioRef.current.play().then(() => {
           setPlaying(true);
         }).catch(() => {});
@@ -25,8 +26,10 @@ const BgmPlayer = forwardRef(function BgmPlayer(_, ref) {
       document.removeEventListener('touchstart', handleFirstInteraction);
     };
 
-    document.addEventListener('click', handleFirstInteraction);
-    document.addEventListener('touchstart', handleFirstInteraction);
+    if (!userPaused.current) {
+      document.addEventListener('click', handleFirstInteraction);
+      document.addEventListener('touchstart', handleFirstInteraction);
+    }
 
     return () => {
       document.removeEventListener('click', handleFirstInteraction);
@@ -39,7 +42,9 @@ const BgmPlayer = forwardRef(function BgmPlayer(_, ref) {
     if (playing) {
       audioRef.current.pause();
       setPlaying(false);
+      userPaused.current = true;
     } else {
+      userPaused.current = false;
       audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
     }
   };

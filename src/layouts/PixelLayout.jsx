@@ -49,6 +49,83 @@ const C = {
 
 const CHARACTER_API_URL = import.meta.env.DEV ? 'http://52.79.132.179:3001' : '';
 
+/** Kakao Map component using JS SDK */
+function KakaoMapView({ lat, lng, name }) {
+  const mapRef = useRef(null);
+  const [sdkLoaded, setSdkLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let attempts = 0;
+    let cancelled = false;
+    const initMap = () => {
+      if (cancelled) return;
+      if (!window.kakao?.maps) {
+        if (attempts++ < 30) {
+          setTimeout(initMap, 300);
+        } else {
+          setFailed(true);
+        }
+        return;
+      }
+      window.kakao.maps.load(() => {
+        if (cancelled || !mapRef.current) return;
+        setSdkLoaded(true);
+        const position = new window.kakao.maps.LatLng(lat, lng);
+        const map = new window.kakao.maps.Map(mapRef.current, {
+          center: position,
+          level: 3,
+        });
+        const marker = new window.kakao.maps.Marker({ map, position });
+        const infowindow = new window.kakao.maps.InfoWindow({
+          content: `<div style="padding:5px;font-size:12px;white-space:nowrap;">${name}</div>`,
+        });
+        infowindow.open(map, marker);
+        map.setDraggable(false);
+        map.setZoomable(false);
+      });
+    };
+    initMap();
+    return () => { cancelled = true; };
+  }, [lat, lng, name]);
+
+  if (failed) {
+    return (
+      <a
+        href={`https://map.kakao.com/link/map/${encodeURIComponent(name)},${lat},${lng}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: '100%', height: '200px', background: '#e8dcc8',
+          flexDirection: 'column', gap: '8px', textDecoration: 'none',
+        }}
+      >
+        <span style={{ fontSize: '32px' }}>🗺️</span>
+        <span className="pixel-font" style={{ color: C.text, fontSize: '12px' }}>
+          카카오맵에서 보기
+        </span>
+      </a>
+    );
+  }
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '250px' }}>
+      <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
+      {!sdkLoaded && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex',
+          alignItems: 'center', justifyContent: 'center', background: C.bg2,
+        }}>
+          <span className="pixel-font" style={{ color: C.textLight, fontSize: '11px' }}>
+            지도 로딩중...
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const copyToClipboard = async (text) => {
   try {
     await navigator.clipboard.writeText(text);
@@ -1101,27 +1178,9 @@ function LocationSection() {
           </h2>
         </motion.div>
 
-        {/* Map - static image with link */}
+        {/* Kakao Map */}
         <motion.div variants={fadeUp} className="pixel-border overflow-hidden mb-5">
-          <a
-            href={`https://map.kakao.com/link/map/${encodeURIComponent(location.name)},${location.lat},${location.lng}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block"
-          >
-            <img
-              src={`https://map.kakao.com/?map_type=TYPE_MAP&map_hybrid=false&q=${encodeURIComponent(location.address)}&urlLevel=3&urlX=${location.lng}&urlY=${location.lat}&itemId=&q=${encodeURIComponent(location.name)}`}
-              alt="지도"
-              style={{ display: 'none' }}
-            />
-            <iframe
-              title="wedding-map"
-              src={`https://map.kakao.com/link/map/${encodeURIComponent(location.name)},${location.lat},${location.lng}`}
-              className="w-full border-0 pointer-events-none"
-              style={{ height: '250px' }}
-              loading="lazy"
-            />
-          </a>
+          <KakaoMapView lat={location.lat} lng={location.lng} name={location.name} />
         </motion.div>
 
         {/* Location info - terminal style */}
@@ -1149,34 +1208,16 @@ function LocationSection() {
           </div>
         </motion.div>
 
-        {/* Navigation buttons - game menu style */}
-        <motion.div variants={fadeUp} className="grid grid-cols-3 gap-2">
+        {/* Navigation button - game menu style */}
+        <motion.div variants={fadeUp} className="flex justify-center">
           <a
             href={`https://map.kakao.com/link/to/${encodeURIComponent(location.name)},${location.lat},${location.lng}`}
             target="_blank"
             rel="noopener noreferrer"
             className="pixel-btn text-center block"
-            style={{ fontSize: '11px', padding: '10px 4px' }}
+            style={{ fontSize: '12px', padding: '12px 24px' }}
           >
-            📎 카카오맵
-          </a>
-          <a
-            href={`https://map.naver.com/v5/directions/-/-/-/transit?c=${location.lng},${location.lat},15,0,0,0,dh`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pixel-btn text-center block"
-            style={{ fontSize: '11px', padding: '10px 4px' }}
-          >
-            📖 네이버맵
-          </a>
-          <a
-            href={`https://www.tmap.co.kr/tmap/app/routes?goalx=${location.lng}&goaly=${location.lat}&goalname=${encodeURIComponent(location.name)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pixel-btn text-center block"
-            style={{ fontSize: '11px', padding: '10px 4px' }}
-          >
-            🚗 티맵
+            📎 카카오맵으로 길찾기
           </a>
         </motion.div>
       </motion.div>
@@ -1980,25 +2021,6 @@ function ShareFooterSection() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleKakaoShare = () => {
-    if (window.Kakao && window.Kakao.Share) {
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: `${weddingConfig.groom.name} & ${weddingConfig.bride.name} \uACB0\uD63C\uD569\uB2C8\uB2E4`,
-          description: `${dateYear}.${dateMonth}.${dateDay} ${weddingConfig.location.name}`,
-          imageUrl: weddingConfig.galleryImages[0] || '',
-          link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href,
-          },
-        },
-      });
-    } else {
-      handleCopyLink();
-    }
-  };
-
   return (
     <section className="py-16 px-5" style={{ background: C.bg1 }}>
       <motion.div
@@ -2026,15 +2048,8 @@ function ShareFooterSection() {
           </div>
         </motion.div>
 
-        {/* Share buttons */}
-        <motion.div variants={fadeUp} className="flex gap-3 justify-center mb-10">
-          <button
-            onClick={handleKakaoShare}
-            className="pixel-btn flex items-center gap-2"
-            style={{ fontSize: '11px' }}
-          >
-            <span>💬</span> 카카오톡 공유
-          </button>
+        {/* Share button */}
+        <motion.div variants={fadeUp} className="flex justify-center mb-10">
           <button
             onClick={handleCopyLink}
             className="pixel-btn flex items-center gap-2"
