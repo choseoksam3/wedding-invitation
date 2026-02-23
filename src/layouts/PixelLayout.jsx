@@ -1460,12 +1460,15 @@ function AccountSection() {
    SECTION 8 - GUESTBOOK (Retro BBS / Message Board)
    ============================================================= */
 
+const MSG_PER_PAGE = 5;
+
 function GuestbookSection() {
   const [messages, setMessages] = useState([]);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [msgPage, setMsgPage] = useState(0);
 
   useEffect(() => {
     const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
@@ -1601,8 +1604,8 @@ function GuestbookSection() {
           </div>
         </motion.form>
 
-        {/* Message list - BBS style (scrollable) */}
-        <motion.div variants={fadeUp} style={{ maxHeight: '400px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }} className="space-y-3">
+        {/* Message list - BBS style (paginated) */}
+        <motion.div variants={fadeUp} className="space-y-3">
           {messages.length === 0 && (
             <div className="pixel-dialog text-center py-6">
               <p className="pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>
@@ -1610,7 +1613,7 @@ function GuestbookSection() {
               </p>
             </div>
           )}
-          {messages.map((msg) => (
+          {messages.slice(msgPage * MSG_PER_PAGE, (msgPage + 1) * MSG_PER_PAGE).map((msg) => (
             <div
               key={msg.id}
               className="pixel-border-thin p-4"
@@ -1635,6 +1638,47 @@ function GuestbookSection() {
               <p className="pixel-font break-words" style={{ color: C.text, fontSize: '12px', lineHeight: '1.7' }}>{msg.content}</p>
             </div>
           ))}
+
+          {/* Pagination */}
+          {messages.length > MSG_PER_PAGE && (() => {
+            const totalPages = Math.ceil(messages.length / MSG_PER_PAGE);
+            return (
+              <div className="flex items-center justify-center gap-1 pt-3">
+                <button
+                  onClick={() => setMsgPage((p) => Math.max(0, p - 1))}
+                  disabled={msgPage === 0}
+                  className="pixel-font-en"
+                  style={{ color: msgPage === 0 ? C.border : C.text, fontSize: '14px', padding: '4px 8px' }}
+                >
+                  &lt;
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setMsgPage(i)}
+                    className="pixel-font-en"
+                    style={{
+                      fontSize: '11px',
+                      padding: '4px 8px',
+                      color: i === msgPage ? C.white : C.text,
+                      backgroundColor: i === msgPage ? C.blue : 'transparent',
+                      border: `2px solid ${i === msgPage ? C.blue : C.border}`,
+                    }}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setMsgPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={msgPage === totalPages - 1}
+                  className="pixel-font-en"
+                  style={{ color: msgPage === totalPages - 1 ? C.border : C.text, fontSize: '14px', padding: '4px 8px' }}
+                >
+                  &gt;
+                </button>
+              </div>
+            );
+          })()}
         </motion.div>
       </motion.div>
     </section>
@@ -1665,6 +1709,7 @@ function CharacterCreatorSection() {
   const [gallery, setGallery] = useState([]);
   const [showGallery, setShowGallery] = useState(false);
   const [selectedChar, setSelectedChar] = useState(null);
+  const [charPage, setCharPage] = useState(0);
   const [elapsedSec, setElapsedSec] = useState(0);
   const timerRef = useRef(null);
 
@@ -2010,8 +2055,8 @@ function CharacterCreatorSection() {
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <div className="grid grid-cols-3 gap-3" style={{ maxHeight: '360px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                    {gallery.map((char) => (
+                  <div className="grid grid-cols-3 gap-3">
+                    {gallery.slice(charPage * 6, (charPage + 1) * 6).map((char) => (
                       <button
                         key={char.id}
                         className="pixel-border-thin p-2 text-center"
@@ -2044,6 +2089,47 @@ function CharacterCreatorSection() {
                       </button>
                     ))}
                   </div>
+
+                  {/* Character gallery pagination */}
+                  {gallery.length > 6 && (() => {
+                    const totalPages = Math.ceil(gallery.length / 6);
+                    return (
+                      <div className="flex items-center justify-center gap-1 pt-3">
+                        <button
+                          onClick={() => setCharPage((p) => Math.max(0, p - 1))}
+                          disabled={charPage === 0}
+                          className="pixel-font-en"
+                          style={{ color: charPage === 0 ? C.border : C.text, fontSize: '14px', padding: '4px 8px' }}
+                        >
+                          &lt;
+                        </button>
+                        {Array.from({ length: totalPages }, (_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCharPage(i)}
+                            className="pixel-font-en"
+                            style={{
+                              fontSize: '11px',
+                              padding: '4px 8px',
+                              color: i === charPage ? C.white : C.text,
+                              backgroundColor: i === charPage ? C.pink : 'transparent',
+                              border: `2px solid ${i === charPage ? C.pink : C.border}`,
+                            }}
+                          >
+                            {i + 1}
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setCharPage((p) => Math.min(totalPages - 1, p + 1))}
+                          disabled={charPage === totalPages - 1}
+                          className="pixel-font-en"
+                          style={{ color: charPage === totalPages - 1 ? C.border : C.text, fontSize: '14px', padding: '4px 8px' }}
+                        >
+                          &gt;
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </motion.div>
               )}
             </AnimatePresence>
