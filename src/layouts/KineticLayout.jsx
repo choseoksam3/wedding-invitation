@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { weddingConfig } from '../config/wedding';
+import { weddingConfig, galleryPath } from '../config/wedding';
 import { useCountdown } from '../hooks/useCountdown';
 import CalendarSave from '../components/CalendarSave';
 import { db } from '../lib/firebase';
@@ -359,14 +359,14 @@ function GallerySection() {
         className="flex gap-3 overflow-x-auto pl-8 pr-8 pb-4 snap-x snap-mandatory"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
-        {weddingConfig.galleryImages.map((src, i) => (
+        {weddingConfig.galleryImages.map((name, i) => (
           <div
             key={i}
             className="shrink-0 snap-center relative overflow-hidden rounded-sm"
             style={{ width: '200px', height: '260px' }}
           >
             <img
-              src={src}
+              src={galleryPath(name).thumb}
               alt={`gallery-${i + 1}`}
               loading="lazy"
               className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
@@ -833,7 +833,7 @@ function ShareSection() {
         content: {
           title: `${weddingConfig.groom.name} & ${weddingConfig.bride.name} 결혼합니다`,
           description: `${dateYear}.${dateMonth}.${dateDay} ${weddingConfig.location.name}`,
-          imageUrl: weddingConfig.galleryImages[0] || '',
+          imageUrl: weddingConfig.galleryImages[0] ? galleryPath(weddingConfig.galleryImages[0]).full : '',
           link: {
             mobileWebUrl: window.location.href,
             webUrl: window.location.href,

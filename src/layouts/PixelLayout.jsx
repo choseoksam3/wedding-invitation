@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { weddingConfig } from '../config/wedding';
+import { weddingConfig, galleryPath } from '../config/wedding';
 import { useCountdown } from '../hooks/useCountdown';
 import { db } from '../lib/firebase';
 import {
@@ -1049,7 +1049,7 @@ function CountdownSection() {
    ============================================================= */
 
 function GallerySection() {
-  const images = weddingConfig.galleryImages;
+  const images = weddingConfig.galleryImages.map(galleryPath);
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const INITIAL_COUNT = 6;
@@ -1075,7 +1075,7 @@ function GallerySection() {
 
         {/* 2-column grid with pixel frames */}
         <motion.div variants={fadeUp} className="grid grid-cols-2 gap-4">
-          {visibleImages.map((src, i) => (
+          {visibleImages.map((img, i) => (
             <motion.button
               key={i}
               className="pixel-border relative overflow-hidden"
@@ -1085,7 +1085,7 @@ function GallerySection() {
               layout
             >
               <img
-                src={src}
+                src={img.thumb}
                 alt={`gallery ${i + 1}`}
                 className="w-full aspect-square object-cover"
                 style={{ imageRendering: 'auto' }}
@@ -1148,7 +1148,7 @@ function GallerySection() {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={images[selectedIdx]}
+                src={images[selectedIdx].full}
                 alt={`gallery ${selectedIdx + 1}`}
                 className="max-h-[75vh] object-contain"
                 style={{ imageRendering: 'auto' }}

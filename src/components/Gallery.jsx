@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { weddingConfig } from '../config/wedding';
+import { weddingConfig, galleryPath } from '../config/wedding';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -20,7 +20,7 @@ const placeholders = [
 export default function Gallery() {
   const [selectedIdx, setSelectedIdx] = useState(null);
   const images = weddingConfig.galleryImages.length > 0
-    ? weddingConfig.galleryImages
+    ? weddingConfig.galleryImages.map(galleryPath)
     : null;
 
   return (
@@ -41,14 +41,14 @@ export default function Gallery() {
       {/* 사진 그리드 */}
       <motion.div variants={fadeInUp} className="grid grid-cols-3 gap-1.5 max-w-sm mx-auto">
         {images
-          ? images.map((src, i) => (
+          ? images.map((img, i) => (
               <div
                 key={i}
                 className="aspect-square rounded-lg overflow-hidden cursor-pointer"
                 onClick={() => setSelectedIdx(i)}
               >
                 <img
-                  src={src}
+                  src={img.thumb}
                   alt={`갤러리 ${i + 1}`}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   loading="lazy"
@@ -76,7 +76,7 @@ export default function Gallery() {
             onClick={() => setSelectedIdx(null)}
           >
             <motion.img
-              src={images[selectedIdx]}
+              src={images[selectedIdx].full}
               alt="확대 사진"
               className="max-w-full max-h-[85vh] rounded-lg object-contain"
               initial={{ scale: 0.8, opacity: 0 }}

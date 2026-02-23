@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { weddingConfig } from '../config/wedding';
+import { weddingConfig, galleryPath } from '../config/wedding';
 import { useCountdown } from '../hooks/useCountdown';
 import CalendarSave from '../components/CalendarSave';
 import { db } from '../lib/firebase';
@@ -122,7 +122,7 @@ function SectionDivider() {
    ============================================================= */
 
 function CoverSection() {
-  const heroImage = weddingConfig.galleryImages[0];
+  const heroImage = weddingConfig.galleryImages[0] ? galleryPath(weddingConfig.galleryImages[0]) : null;
 
   return (
     <section className="min-h-screen relative flex flex-col items-center justify-end overflow-hidden">
@@ -130,7 +130,7 @@ function CoverSection() {
       {heroImage ? (
         <div className="absolute inset-0">
           <img
-            src={heroImage}
+            src={heroImage.full}
             alt="wedding cover"
             className="w-full h-full object-cover"
           />
@@ -405,7 +405,7 @@ function CountdownSection() {
    ============================================================= */
 
 function GallerySection() {
-  const images = weddingConfig.galleryImages;
+  const images = weddingConfig.galleryImages.map(galleryPath);
   const [selectedIdx, setSelectedIdx] = useState(null);
 
   return (
@@ -434,7 +434,7 @@ function GallerySection() {
 
         {/* 3-column grid */}
         <motion.div variants={fadeUp} className="grid grid-cols-3 gap-1.5">
-          {images.map((src, i) => (
+          {images.map((img, i) => (
             <motion.button
               key={i}
               className="relative aspect-square overflow-hidden rounded"
@@ -442,7 +442,7 @@ function GallerySection() {
               onClick={() => setSelectedIdx(i)}
             >
               <img
-                src={src}
+                src={img.thumb}
                 alt={`gallery ${i + 1}`}
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -480,7 +480,7 @@ function GallerySection() {
             {/* Image */}
             <motion.img
               key={selectedIdx}
-              src={images[selectedIdx]}
+              src={images[selectedIdx].full}
               alt={`gallery ${selectedIdx + 1}`}
               className="max-w-[90vw] max-h-[80vh] object-contain rounded"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -973,7 +973,7 @@ function ShareFooterSection() {
         content: {
           title: `${weddingConfig.groom.name} & ${weddingConfig.bride.name} 결혼합니다`,
           description: `${dateYear}.${dateMonth}.${dateDay} ${weddingConfig.location.name}`,
-          imageUrl: weddingConfig.galleryImages[0] || '',
+          imageUrl: weddingConfig.galleryImages[0] ? galleryPath(weddingConfig.galleryImages[0]).full : '',
           link: {
             mobileWebUrl: window.location.href,
             webUrl: window.location.href,

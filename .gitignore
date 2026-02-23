@@ -9,6 +9,10 @@ lerna-debug.log*
 
 node_modules
 dist
+
+# Generated optimized images (run npm run optimize-images to regenerate)
+public/images/gallery/thumb/
+public/images/gallery/full/
 dist-ssr
 *.local
 .env

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { weddingConfig } from '../config/wedding';
+import { weddingConfig, galleryPath } from '../config/wedding';
 
 export default function MainCover() {
   const date = new Date(weddingConfig.date);
@@ -35,7 +35,7 @@ export default function MainCover() {
         >
           {weddingConfig.galleryImages[0] ? (
             <img
-              src={weddingConfig.galleryImages[0]}
+              src={galleryPath(weddingConfig.galleryImages[0]).full}
               alt="웨딩 사진"
               className="w-full h-full object-cover"
             />
