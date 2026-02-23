@@ -464,14 +464,14 @@ function GallerySection() {
           >
             {/* Close button */}
             <button
-              className="absolute top-4 right-4 text-white/60 text-2xl z-10 w-10 h-10 flex items-center justify-center"
+              className="absolute top-4 right-4 text-white/60 text-2xl z-30 w-10 h-10 flex items-center justify-center"
               onClick={() => setSelectedIdx(null)}
             >
               &times;
             </button>
 
             {/* Counter */}
-            <div className="absolute top-4 left-4 z-10">
+            <div className="absolute top-4 left-4 z-30">
               <span className="text-white/50 text-xs tabular-nums">
                 {selectedIdx + 1} / {images.length}
               </span>

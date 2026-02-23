@@ -1126,14 +1126,14 @@ function GallerySection() {
             onClick={() => setSelectedIdx(null)}
           >
             <button
-              className="absolute top-4 right-4 pixel-font-en z-10"
+              className="absolute top-4 right-4 pixel-font-en z-30"
               style={{ color: C.white, fontSize: '16px' }}
               onClick={() => setSelectedIdx(null)}
             >
               [X]
             </button>
 
-            <div className="absolute top-4 left-4 z-10">
+            <div className="absolute top-4 left-4 z-30">
               <span className="pixel-font" style={{ color: C.bg2, fontSize: '11px' }}>
                 {selectedIdx + 1} / {images.length}
               </span>
