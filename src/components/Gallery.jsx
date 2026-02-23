@@ -88,7 +88,7 @@ export default function Gallery() {
             {/* 좌우 네비게이션 */}
             {selectedIdx > 0 && (
               <button
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl p-2"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/80 text-xl active:bg-black/50 transition-colors"
                 onClick={(e) => { e.stopPropagation(); setSelectedIdx(selectedIdx - 1); }}
               >
                 ‹
@@ -96,7 +96,7 @@ export default function Gallery() {
             )}
             {selectedIdx < images.length - 1 && (
               <button
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl p-2"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/80 text-xl active:bg-black/50 transition-colors"
                 onClick={(e) => { e.stopPropagation(); setSelectedIdx(selectedIdx + 1); }}
               >
                 ›

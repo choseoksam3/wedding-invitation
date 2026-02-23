@@ -1170,6 +1170,20 @@ function GallerySection() {
                 setSelectedIdx((prev) => (prev + 1) % images.length);
               }}
             />
+
+            {/* Arrow indicators */}
+            <button
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center pixel-font-en pointer-events-none"
+              style={{ backgroundColor: 'rgba(58,46,36,0.4)', color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
+            >
+              &lt;
+            </button>
+            <button
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center pixel-font-en pointer-events-none"
+              style={{ backgroundColor: 'rgba(58,46,36,0.4)', color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
+            >
+              &gt;
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

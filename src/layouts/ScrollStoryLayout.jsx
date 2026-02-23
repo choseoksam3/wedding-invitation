@@ -505,6 +505,14 @@ function GallerySection() {
                 setSelectedIdx((prev) => (prev + 1) % images.length);
               }}
             />
+
+            {/* Arrow indicators */}
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+              <span className="text-white/70 text-lg">&lsaquo;</span>
+            </div>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+              <span className="text-white/70 text-lg">&rsaquo;</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
