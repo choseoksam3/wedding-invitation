@@ -490,29 +490,29 @@ function GallerySection() {
               onClick={(e) => e.stopPropagation()}
             />
 
-            {/* Prev / Next tap areas */}
-            <div
-              className="absolute inset-y-0 left-0 w-1/3 z-5 cursor-pointer"
+            {/* Prev / Next */}
+            <button
+              className="absolute inset-y-0 left-0 w-1/3 z-20 flex items-center justify-start pl-3"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedIdx((prev) => (prev - 1 + images.length) % images.length);
               }}
-            />
-            <div
-              className="absolute inset-y-0 right-0 w-1/3 z-5 cursor-pointer"
+            >
+              <span className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+                <span className="text-white/70 text-lg">&lsaquo;</span>
+              </span>
+            </button>
+            <button
+              className="absolute inset-y-0 right-0 w-1/3 z-20 flex items-center justify-end pr-3"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedIdx((prev) => (prev + 1) % images.length);
               }}
-            />
-
-            {/* Arrow indicators */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center pointer-events-none">
-              <span className="text-white/70 text-lg">&lsaquo;</span>
-            </div>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center pointer-events-none">
-              <span className="text-white/70 text-lg">&rsaquo;</span>
-            </div>
+            >
+              <span className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
+                <span className="text-white/70 text-lg">&rsaquo;</span>
+              </span>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

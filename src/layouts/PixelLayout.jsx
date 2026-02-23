@@ -1156,33 +1156,33 @@ function GallerySection() {
             </motion.div>
 
             {/* Prev / Next */}
-            <div
-              className="absolute inset-y-0 left-0 w-1/3 z-5 cursor-pointer"
+            <button
+              className="absolute inset-y-0 left-0 w-1/3 z-20 flex items-center justify-start pl-3"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedIdx((prev) => (prev - 1 + images.length) % images.length);
               }}
-            />
-            <div
-              className="absolute inset-y-0 right-0 w-1/3 z-5 cursor-pointer"
+            >
+              <span
+                className="w-9 h-9 rounded-full flex items-center justify-center pixel-font-en"
+                style={{ backgroundColor: 'rgba(58,46,36,0.4)', color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
+              >
+                &lt;
+              </span>
+            </button>
+            <button
+              className="absolute inset-y-0 right-0 w-1/3 z-20 flex items-center justify-end pr-3"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedIdx((prev) => (prev + 1) % images.length);
               }}
-            />
-
-            {/* Arrow indicators */}
-            <button
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center pixel-font-en pointer-events-none"
-              style={{ backgroundColor: 'rgba(58,46,36,0.4)', color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
             >
-              &lt;
-            </button>
-            <button
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center pixel-font-en pointer-events-none"
-              style={{ backgroundColor: 'rgba(58,46,36,0.4)', color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
-            >
-              &gt;
+              <span
+                className="w-9 h-9 rounded-full flex items-center justify-center pixel-font-en"
+                style={{ backgroundColor: 'rgba(58,46,36,0.4)', color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
+              >
+                &gt;
+              </span>
             </button>
           </motion.div>
         )}
