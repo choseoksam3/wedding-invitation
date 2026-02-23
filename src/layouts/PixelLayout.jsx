@@ -1601,8 +1601,8 @@ function GuestbookSection() {
           </div>
         </motion.form>
 
-        {/* Message list - BBS style */}
-        <motion.div variants={fadeUp} className="space-y-3">
+        {/* Message list - BBS style (scrollable) */}
+        <motion.div variants={fadeUp} style={{ maxHeight: '400px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }} className="space-y-3">
           {messages.length === 0 && (
             <div className="pixel-dialog text-center py-6">
               <p className="pixel-font" style={{ color: C.textLight, fontSize: '12px' }}>
@@ -2010,7 +2010,7 @@ function CharacterCreatorSection() {
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-3" style={{ maxHeight: '360px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
                     {gallery.map((char) => (
                       <button
                         key={char.id}
