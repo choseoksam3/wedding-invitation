@@ -214,7 +214,7 @@ function BattleScene({ onComplete }) {
 
   // Phase progression
   useEffect(() => {
-    const durations = [500, 700, 700, 500, 600];
+    const durations = [625, 875, 875, 625, 750];
     if (phase >= durations.length) return;
     const timer = setTimeout(() => {
       if (phase === 4) {

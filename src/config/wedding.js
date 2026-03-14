@@ -39,12 +39,13 @@ export const weddingConfig = {
   },
   accounts: {
     groom: [
-      { bank: '신한은행', number: '110-456-789012', holder: '조석삼' },
-      { bank: '국민은행', number: '940-25-0012-345', holder: '조인수' },
+      { bank: '국민은행', number: '075602-04-226657', holder: '조석삼' },
+      { bank: '농협은행', number: '356-0096-4232-83', holder: '조인수' },
+      { bank: '농협은행', number: '310-12-094282', holder: '지향자' },
     ],
     bride: [
-      { bank: '우리은행', number: '1002-567-890123', holder: '박수인' },
-      { bank: '하나은행', number: '612-910234-56789', holder: '박철홍' },
+      { bank: '카카오뱅크', number: '3333-22-5073094', holder: '박수인' },
+      { bank: '하나은행', number: '101-910518-17107', holder: '오지영' },
     ],
   },
   greeting: `서로 다른 길을 걸어온 두 사람이\n같은 곳을 바라보며 함께 걸어가려 합니다.\n\n살아가면서 소중한 것들을\n함께 나누며 살겠습니다.\n\n저희의 새로운 시작을\n축복해 주시면 감사하겠습니다.`,
