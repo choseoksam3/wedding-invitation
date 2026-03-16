@@ -14,6 +14,7 @@ import {
   serverTimestamp,
   limit,
 } from 'firebase/firestore';
+import ShuttleBus from '../components/ShuttleBus';
 
 
 /* =====================================================
@@ -2344,6 +2345,8 @@ export default function PixelLayout() {
         <LocationSection />
         <PixelDivider />
         <TransportationSection />
+        <PixelDivider />
+        <ShuttleBus />
         <PixelDivider />
         <AccountSection />
         <PixelDivider />

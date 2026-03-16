@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { weddingConfig, galleryPath } from '../config/wedding';
 import { useCountdown } from '../hooks/useCountdown';
 import CalendarSave from '../components/CalendarSave';
+import ShuttleBus from '../components/ShuttleBus';
 import { db } from '../lib/firebase';
 import {
   collection,
@@ -937,6 +938,7 @@ export default function KineticLayout() {
       <GallerySection />
       <LocationSection />
       <TransportationSection />
+      <ShuttleBus />
       <AccountSection />
       <GuestbookSection />
       <ShareSection />

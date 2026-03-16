@@ -5,6 +5,7 @@ import CalendarSave from '../components/CalendarSave';
 import Gallery from '../components/Gallery';
 import Location from '../components/Location';
 import Transportation from '../components/Transportation';
+import ShuttleBus from '../components/ShuttleBus';
 import Account from '../components/Account';
 import Guestbook from '../components/Guestbook';
 import Share from '../components/Share';
@@ -20,6 +21,7 @@ export default function ClassicLayout() {
       <Gallery />
       <Location />
       <Transportation />
+      <ShuttleBus />
       <Account />
       <Guestbook />
       <Share />

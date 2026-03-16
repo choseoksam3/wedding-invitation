@@ -58,6 +58,13 @@ export default function Transportation() {
             desc={transportation.parking}
           />
         )}
+        {transportation.shuttle && (
+          <InfoRow
+            icon="🚐"
+            title="전세버스"
+            desc={transportation.shuttle.description}
+          />
+        )}
       </motion.div>
     </motion.section>
   );
